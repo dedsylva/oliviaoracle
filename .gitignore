@@ -1,0 +1,8 @@
+# Local files
+notes.txt
+elevenlabsapikey.txt
+openaiapikey.txt
+*.json
+*.wav
+*.mp3
+__pycache__

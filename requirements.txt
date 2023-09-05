@@ -1,0 +1,7 @@
+sounddevice==0.4.6
+soundfile==0.12.1
+numpy==1.21.5
+openai==0.28.0
+requests==2.25.1
+colorama==0.4.4
+ydub==0.25.1
