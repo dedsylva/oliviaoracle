@@ -1,5 +1,10 @@
 # OliviaOracle - A Simple Assistant
 
+<p align="center">
+  <img width="80%" height="80%" src="assets/logo.jpeg">
+</p>
+
+
 ## How to Use
 
 ### Setups
@@ -11,9 +16,11 @@
 ### Running
 ```bash
 # for default settings (english language)
+cd olivia
 ./main.py 
 
 # for portuguese language
+cd olivia
 LANGUAGE=pt ./main.py 
 ```
 

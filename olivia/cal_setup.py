@@ -8,7 +8,6 @@ from google.auth.transport.requests import Request
 
 # https://console.cloud.google.com/ --> settings of project
 
-# If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 CREDENTIALS_FILE = '../credentials.json'
