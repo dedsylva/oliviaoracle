@@ -11,6 +11,7 @@ class ElevenLabsService:
 
   def text_to_speech(self, text):
     text = re.sub(r'(Response:|Narration:|Image: generate_image:.*|)', '', text).strip()
+
     url = f'https://api.elevenlabs.io/v1/text-to-speech/{self.voice_id}'
     headers = {
         'Accept': 'audio/mpeg',

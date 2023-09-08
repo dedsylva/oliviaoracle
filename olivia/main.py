@@ -47,9 +47,7 @@ if __name__ == "__main__":
     context_manager_service = ContextManagerService(LANGUAGE)
     record_service = RecordService(duration=5, fs=44100, channels=2)
 
-    CONTEXT_FILE = context_manager_service.get_context_file
-    
-    context = open_file(CONTEXT_FILE)
+    context = context_manager_service.get_context()
 
     chatgpt_service = ChatGPTService(OPENAI_API_KEY, context)
     eleven_labs_service = ElevenLabsService(VOICE_ID, EL_API_KEY, MODEL)

@@ -17,7 +17,7 @@ class ChatGPTService:
     return transcription
 
   def call_chatgpt(self, user_input):
-    openai.api_key = self.api_key
+    openai.api_key = self.openai_api_key
 
     self.conversation.append({"role": "user","content": user_input})
 
