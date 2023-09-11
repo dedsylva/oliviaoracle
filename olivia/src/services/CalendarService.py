@@ -16,6 +16,7 @@ class CalendarService:
   def get_calendar_service(self):
     return self.service
 
+  @staticmethod
   def handle_time_and_create_response_message(event_time):
     hour, minute, _ = event_time.split('-')[0].split(':')
 
@@ -34,15 +35,16 @@ class CalendarService:
 
     return response
         
-  def get_upcoming_events(self, number_of_events):
+  def get_upcoming_events(self, number_of_days):
 
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    # TODO: replace print with logging
     print('Getting List of 10 events')
     events_result = self.service.events().list(
                         calendarId='primary', 
                         timeMin=now,
-                        maxResults=number_of_events, 
+                        maxResults=number_of_days, 
                         singleEvents=True,
                         orderBy='startTime').execute()
     events = events_result.get('items', [])
@@ -67,6 +69,6 @@ class CalendarService:
 
       # TODO: create method for handling the type of messages better
       if event_date_start == event_date_end:
-        print(f"{event['summary']} happens on {day_start} of {get_month_name(month_start)} of {year_start}, starting at {handle_time_and_create_response_message(event_time_start)} and ending at {handle_time_and_create_response_message(event_time_end)}")
+        print(f"{event['summary']} happens on {day_start} of {get_month_name(month_start)} of {year_start}, starting at {CalendarService.handle_time_and_create_response_message(event_time_start)} and ending at {CalendarService.handle_time_and_create_response_message(event_time_end)}")
       else:
-        print(f"{event['summary']} starts on {day_start} of {get_month_name(month_start)} of {year_start} at {handle_time_and_create_response_message(event_time_start)} and it ends on {day_end} of {get_month_name(month_end)}, {year_end} at {handle_time_and_create_response_message(event_time_end)}")
+        print(f"{event['summary']} starts on {day_start} of {get_month_name(month_start)} of {year_start} at {CalendarService.handle_time_and_create_response_message(event_time_start)} and it ends on {day_end} of {get_month_name(month_end)}, {year_end} at {CalendarService.handle_time_and_create_response_message(event_time_end)}")
