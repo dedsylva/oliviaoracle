@@ -53,6 +53,7 @@ class CalendarService:
       # TODO: replace print with logging
       # TODO: create custom exception
       print('No upcoming events found.')
+      return "{\"descrption\": \"no events found for the next\" + number_of_days + \" days\"}"
     else:
       return events
 
@@ -67,8 +68,4 @@ class CalendarService:
       event_date_end, event_time_end = event['end'].get('dateTime', event['start'].get('date')).split('T')
       year_end, month_end, day_end = event_date_end.split("-")
 
-      # TODO: create method for handling the type of messages better
-      if event_date_start == event_date_end:
-        print(f"{event['summary']} happens on {day_start} of {get_month_name(month_start)} of {year_start}, starting at {CalendarService.handle_time_and_create_response_message(event_time_start)} and ending at {CalendarService.handle_time_and_create_response_message(event_time_end)}")
-      else:
-        print(f"{event['summary']} starts on {day_start} of {get_month_name(month_start)} of {year_start} at {CalendarService.handle_time_and_create_response_message(event_time_start)} and it ends on {day_end} of {get_month_name(month_end)}, {year_end} at {CalendarService.handle_time_and_create_response_message(event_time_end)}")
+      return "{\"event_name\": " + event['summary']+ ", \"day_start\": " + day_start + ", \"month_start\": "+ get_month_name(month_start) + " , \"year_start\": " + year_start + " , \"time_start\": " + CalendarService.handle_time_and_create_response_message(event_time_start) + ", \"day_end\": " + day_end + ", \"month_end\": "+ get_month_name(month_end) + " , \"year_end\": " + year_end + " , \"time_end\": " + CalendarService.handle_time_and_create_response_message(event_time_end) + "}"

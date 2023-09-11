@@ -15,4 +15,4 @@ class GoogleManager:
   def get_events(self, number_of_days=10):
 
     events = self.calendar_service.get_upcoming_events(number_of_days)
-    CalendarService.create_response_message(events)
+    return CalendarService.create_response_message(events)

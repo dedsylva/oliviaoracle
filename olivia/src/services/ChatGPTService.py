@@ -34,15 +34,38 @@ class ChatGPTService:
         frequency_penalty=self.frequency_penalty,
         presence_penalty=self.presence_penalty,
         messages=self.conversation,
-        functions=self.function)
+        functions=self.functions)
 
     chat_response = completion['choices'][0]['message']
+
+    return self.handle_response(chat_response)
+ 
+  def callback_chatgpt_with_function_results(self, function_name, function_response):
+
+    openai.api_key = self.openai_api_key
+
+    self.conversation.append({"role": "function", "name": function_name, "content": function_response})
+
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo-0613",
+        temperature=self.temperature,
+        frequency_penalty=self.frequency_penalty,
+        presence_penalty=self.presence_penalty,
+        messages=self.conversation,
+        functions=self.functions)
+
+    chat_response = completion['choices'][0]['message']
+    return self.handle_response(chat_response)
+
+ 
+  def handle_response(self, chat_response):
 
     if chat_response.get("function_call"):
       self.conversation.append({"role": "assistant", "content": chat_response["content"], "function_call": chat_response["function_call"]})
       self.function_called = True
+      return chat_response["content"], chat_response["function_call"]
     else:
       self.conversation.append({"role": "assistant", "content": chat_response["content"]})
       self.function_called = False
+      return chat_response["content"], None
 
-    return chat_response["content"], chat_response["function_call"]

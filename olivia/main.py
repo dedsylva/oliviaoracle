@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import os
+import json
 from colorama import Fore, Style, init
 from src.services.ContextManagerService import ContextManagerService
 from src.services.RecordService import RecordService
@@ -28,8 +29,9 @@ def run():
   # Call ChatGPT
   response, function_call = chatgpt_service.call_chatgpt(user_input=transcription)
 
-  if chatgpt_service.function_called:
-    call_function(function_call)
+  while chatgpt_service.function_called:
+    function_result = call_function(function_call)
+    response, function_call = chatgpt_service.callback_chatgpt_with_function_results(function_call["name"], function_result)
 
   # TODO: replace print with log
   print_colored("Julie:", f"{response}\n\n")
@@ -56,6 +58,8 @@ if __name__ == "__main__":
     chatgpt_service = ChatGPTService(openai_api_key=OPENAI_API_KEY, context=context, functions=FUNCTIONS)
     eleven_labs_service = ElevenLabsService(voice_id=VOICE_ID, api_key=EL_API_KEY, model=MODEL)
     google_manager = GoogleManager()
+    google_manager.get_events()
+    exit(0)
 
     while True:
       run()
