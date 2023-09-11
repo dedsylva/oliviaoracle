@@ -5,4 +5,5 @@ openaiapikey.txt
 *.json
 *.wav
 *.mp3
+olivia/token.pickle
 __pycache__
