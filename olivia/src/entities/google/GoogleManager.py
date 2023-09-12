@@ -20,3 +20,6 @@ class GoogleManager:
 
     events = self.calendar_service.get_upcoming_events(number_of_days)
     return CalendarService.create_response_message(events)
+  
+  def create_event(self, event):
+    self.calendar_service._create_event(event)

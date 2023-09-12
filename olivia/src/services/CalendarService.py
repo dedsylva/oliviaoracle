@@ -2,11 +2,7 @@ import logging
 import datetime
 from googleapiclient.discovery import build
 from src.aux.utils import get_month_name
-
-
-# https://console.cloud.google.com/ --> settings of project
-SCOPES = ['https://www.googleapis.com/auth/calendar']
-CREDENTIALS_FILE = '../credentials.json'
+from src.domain.google.Event import Event
 
 class CalendarService:
 
@@ -55,6 +51,8 @@ class CalendarService:
       logging.WARN("No upcoming events found")
       return "{\"descrption\": \"no events found for the next\" + number_of_days + \" days\"}"
     else:
+      logging.DEBUG("Got the following events from Google Calendar API")
+      logging.DEBUG(events)
       return events
 
   @staticmethod
@@ -72,3 +70,9 @@ class CalendarService:
       year_end, month_end, day_end = event_date_end.split("-")
 
       return "{\"event_name\": " + event['summary']+ ", \"day_start\": " + day_start + ", \"month_start\": "+ get_month_name(month_start) + " , \"year_start\": " + year_start + " , \"time_start\": " + CalendarService.handle_time_and_create_response_message(event_time_start) + ", \"day_end\": " + day_end + ", \"month_end\": "+ get_month_name(month_end) + " , \"year_end\": " + year_end + " , \"time_end\": " + CalendarService.handle_time_and_create_response_message(event_time_end) + "}"
+  
+  def _create_event(self, event: Event):
+    # https://developers.google.com/calendar/api/v3/reference/events/insert#python
+    self.service.events().insert(
+                            calendarId='primary', 
+                            body=event).execute()

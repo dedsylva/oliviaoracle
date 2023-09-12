@@ -1,5 +1,5 @@
 import logging
-from src.domain.Function import Function
+from olivia.src.domain.common.Function import Function
 from src.management.Singleton import Singleton
 
 class Functions(metaclass=Singleton):
