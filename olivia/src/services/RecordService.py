@@ -1,3 +1,4 @@
+import logging
 import sounddevice as sd
 import soundfile as sf
 
@@ -7,14 +8,15 @@ class RecordService:
     self.fs = fs
     self.channels = channels
 
+    logging.DEBUG(f"Instantiating RecordService")
+
   def record(self):
-    # TODO: replace print with log
-      print('Recording...')
+      logging.INFO('Recording...')
 
       myrecording = sd.rec(int(self.duration * self.fs), samplerate=self.fs, channels=self.channels)
       sd.wait()
 
-      print('Recording complete.')
+      logging.INFO('Recording complete.')
 
       filename = 'myrecording.wav'
       sf.write(filename, myrecording, self.fs)

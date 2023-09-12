@@ -1,3 +1,4 @@
+import logging
 import datetime
 from googleapiclient.discovery import build
 from src.aux.utils import get_month_name
@@ -36,6 +37,7 @@ class CalendarService:
     return response
         
   def get_upcoming_events(self, number_of_days):
+    logging.DEBUG(f"Getting Upcoming Events for {number_of_days} days")
 
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
@@ -50,15 +52,16 @@ class CalendarService:
     events = events_result.get('items', [])
 
     if not events:
-      # TODO: replace print with logging
-      # TODO: create custom exception
-      print('No upcoming events found.')
+      logging.WARN("No upcoming events found")
       return "{\"descrption\": \"no events found for the next\" + number_of_days + \" days\"}"
     else:
       return events
 
   @staticmethod
   def create_response_message(events):
+    logging.DEBUG(f"Creating Response Message for events:")
+    logging.DEBUG(events)
+
     for event in events:
       # start information
       event_date_start, event_time_start = event['start'].get('dateTime', event['start'].get('date')).split('T')

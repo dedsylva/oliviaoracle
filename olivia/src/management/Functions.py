@@ -1,3 +1,4 @@
+import logging
 from src.domain.Function import Function
 from src.management.Singleton import Singleton
 
@@ -7,6 +8,7 @@ class Functions(metaclass=Singleton):
     self.functions = []
 
   def _add(self, name, value, args):
+    logging.DEBUG(f"Adding function {name} with args {args}")
     args = [args] if type(args) == str else args
     self.functions.append(Function(name, value, args))
   

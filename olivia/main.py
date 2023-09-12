@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import os
-import json
+import logging
 from colorama import Fore, Style, init
 from src.services.ContextManagerService import ContextManagerService
 from src.services.RecordService import RecordService
@@ -9,6 +9,7 @@ from src.services.ChatGPTService import ChatGPTService
 from src.services.ElevenLabsService import ElevenLabsService
 from src.entities.google.GoogleManager import GoogleManager
 from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json, call_function, get_available_functions 
+from src.logs.LogHandler import LogHandler
 
 init()
 
@@ -39,6 +40,8 @@ def run():
   eleven_labs_service.text_to_speech(text=response)
 
 if __name__ == "__main__":
+    LogHandler()
+
     LANGUAGE = os.getenv("LANGUAGE", "en")
     MODEL = os.getenv("MODEL", "eleven_multilingual_v2")
     NAME = os.getenv("NAME", None) 
@@ -48,8 +51,9 @@ if __name__ == "__main__":
     OPENAI_API_KEY = open_file('openaiapikey.txt')
     EL_API_KEY = open_file('elevenlabsapikey.txt')
 
+    logging.INFO(f"Starting Olivia Oracle with Language {LANGUAGE} and Model {MODEL}")
+
     # TODO: create another file that handles stantiating those classes
-    # TODO: make those classes singleton
     context_manager_service = ContextManagerService(LANGUAGE)
     record_service = RecordService(duration=5, fs=44100, channels=2)
 
@@ -58,8 +62,6 @@ if __name__ == "__main__":
     chatgpt_service = ChatGPTService(openai_api_key=OPENAI_API_KEY, context=context, functions=FUNCTIONS)
     eleven_labs_service = ElevenLabsService(voice_id=VOICE_ID, api_key=EL_API_KEY, model=MODEL)
     google_manager = GoogleManager()
-    google_manager.get_events()
-    exit(0)
 
     while True:
       run()

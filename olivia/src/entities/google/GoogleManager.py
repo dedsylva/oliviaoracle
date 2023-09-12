@@ -1,3 +1,4 @@
+import logging
 from src.services.AuthenticationService import AuthenticationService
 from src.services.CalendarService import CalendarService 
 from src.management.Functions import Functions
@@ -12,7 +13,10 @@ class GoogleManager:
     self.functions = Functions()
     self.functions._add("get_events", self.get_events, "number_of_days")
 
+    logging.DEBUG(f"Instantiating GoogleManager")
+
   def get_events(self, number_of_days=10):
+    logging.INFO("Getting events from Google Calendar")
 
     events = self.calendar_service.get_upcoming_events(number_of_days)
     return CalendarService.create_response_message(events)
