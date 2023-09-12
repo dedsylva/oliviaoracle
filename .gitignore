@@ -6,5 +6,5 @@ openaiapikey.txt
 *.wav
 *.mp3
 olivia/token.pickle
-olivia/src/logs/
+olivia/src/logs/*.log
 __pycache__
