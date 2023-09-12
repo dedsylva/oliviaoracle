@@ -8,7 +8,7 @@ from src.services.RecordService import RecordService
 from src.services.ChatGPTService import ChatGPTService
 from src.services.ElevenLabsService import ElevenLabsService
 from src.entities.google.GoogleManager import GoogleManager
-from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json, call_function, get_available_functions 
+from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json, call_function
 from src.logs.LogHandler import LogHandler
 
 init()
@@ -33,9 +33,6 @@ def run():
   while chatgpt_service.function_called:
     function_result = call_function(function_call)
     response, function_call = chatgpt_service.callback_chatgpt_with_function_results(function_call["name"], function_result)
-
-  # TODO: replace print with log
-  print_colored("Julie:", f"{response}\n\n")
 
   eleven_labs_service.text_to_speech(text=response)
 

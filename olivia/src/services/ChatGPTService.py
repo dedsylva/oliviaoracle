@@ -31,7 +31,8 @@ class ChatGPTService:
       self.functions.append(function)
       logging.INFO(f"Adding function {function}")
 
-    logging.INFO("Calling ChatGPT API")
+    logging.INFO("Calling ChatGPT API with text:")
+    logging.INFO(user_input)
     openai.api_key = self.openai_api_key
 
     self.conversation.append({"role": "user","content": user_input})
