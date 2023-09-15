@@ -2,14 +2,15 @@ import logging
 from src.aux.utils import open_file
 from src.exceptions.InvalidLanguage import InvalidLanguage
 
+
 class ContextManagerService:
   def __init__(self, language):
     self.language = language
     self.context = None
-    logging.DEBUG(f"Instantiating ContextManagerService")
+    logging.debug(f"Instantiating ContextManagerService")
   
   def get_context(self):
-    logging.INFO(f"Getting context file")
+    logging.info(f"Getting context file")
 
     if self.language == "en":
         self.context = "chatbot_en.txt"

@@ -14,12 +14,12 @@ class ChatGPTService:
 
     self.conversation = [{"role": "system","content": self.context}]
 
-    logging.DEBUG(f"Instantiating ChatGPTService")
-    logging.DEBUG(f"Context message: {self.conversation}")
+    logging.debug("Instantiating ChatGPTService")
+    logging.debug(f"Context message: {self.conversation}")
 
   def speech_to_text(self, filename):
     with open(filename, "rb") as file:
-      logging.INFO("Calling Whisper API")
+      logging.info("Calling Whisper API")
 
       openai.api_key = self.openai_api_key
       result = openai.Audio.transcribe("whisper-1", file)
@@ -29,10 +29,10 @@ class ChatGPTService:
   def call_chatgpt(self, user_input, function=None):
     if function is not None:
       self.functions.append(function)
-      logging.INFO(f"Adding function {function}")
+      logging.info(f"Adding function {function}")
 
-    logging.INFO("Calling ChatGPT API with text:")
-    logging.INFO(user_input)
+    logging.info("Calling ChatGPT API with text:")
+    logging.info(user_input)
     openai.api_key = self.openai_api_key
 
     self.conversation.append({"role": "user","content": user_input})
@@ -46,15 +46,15 @@ class ChatGPTService:
         functions=self.functions)
 
     chat_response = completion['choices'][0]['message']
-    logging.DEBUG("ChatGPT Response: {chat_response}")
-    logging.DEBUG("ChatGPT Messages: {self.conversation}")
+    logging.debug(f"ChatGPT Response: {chat_response}")
+    logging.debug(f"ChatGPT Messages: {self.conversation}")
 
     return self.handle_response(chat_response)
  
   def callback_chatgpt_with_function_results(self, function_name, function_response):
 
-    logging.INFO("Calling ChatGPT API for function {function_name}")
-    logging.DEBUG("Function Response: {function_response}")
+    logging.info(f"Calling ChatGPT API for function {function_name}")
+    logging.debug(f"Function Response: {function_response}")
     openai.api_key = self.openai_api_key
 
     self.conversation.append({"role": "function", "name": function_name, "content": function_response})
@@ -68,13 +68,13 @@ class ChatGPTService:
         functions=self.functions)
 
     chat_response = completion['choices'][0]['message']
-    logging.DEBUG("ChatGPT Response from sending function outputs: {chat_response}")
-    logging.DEBUG("ChatGPT Messages: {self.conversation}")
+    logging.debug(f"ChatGPT Response from sending function outputs: {chat_response}")
+    logging.debug(f"ChatGPT Messages: {self.conversation}")
     return self.handle_response(chat_response)
 
  
   def handle_response(self, chat_response):
-    logging.DEBUG("Handling Response {chat_response}")
+    logging.debug(f"Handling Response {chat_response}")
 
     if chat_response.get("function_call"):
       self.conversation.append({"role": "assistant", "content": chat_response["content"], "function_call": chat_response["function_call"]})

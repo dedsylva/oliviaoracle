@@ -2,27 +2,20 @@
 
 import os
 import logging
-from colorama import Fore, Style, init
 from src.services.ContextManagerService import ContextManagerService
 from src.services.RecordService import RecordService
 from src.services.ChatGPTService import ChatGPTService
 from src.services.ElevenLabsService import ElevenLabsService
+from src.services.FunctionService import FunctionService
+from src.services.AuthenticationService import AuthenticationService
 from src.entities.google.GoogleManager import GoogleManager
-from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json, call_function
-from src.logs.LogHandler import LogHandler
-
-init()
-
-def print_colored(agent, text):
-    agent_colors = {
-        "Julie:": Fore.YELLOW,
-    }
-    color = agent_colors.get(agent, "")
-    print(color + f"{agent}: {text}" + Style.RESET_ALL, end="")
+from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json
+from src.management.LogHandler import LogHandler
 
 def run():
   # Record Speech
-  filename = record_service.record()
+  # filename = record_service.record()
+  filename = 'myrecording.wav'
 
   # Translate to Text using Whisper
   transcription = chatgpt_service.speech_to_text(filename)
@@ -31,34 +24,43 @@ def run():
   response, function_call = chatgpt_service.call_chatgpt(user_input=transcription)
 
   while chatgpt_service.function_called:
-    function_result = call_function(function_call)
-    response, function_call = chatgpt_service.callback_chatgpt_with_function_results(function_call["name"], function_result)
+    function_result = function_service.call_function(function_call)
+
+    if function_result is None:
+       logging.error(f"Function {function_call['name']} wasn't called correctly")
+    else:
+      response, function_call = chatgpt_service.callback_chatgpt_with_function_results(function_call["name"], function_result)
 
   eleven_labs_service.text_to_speech(text=response)
 
 if __name__ == "__main__":
-    LogHandler()
 
-    LANGUAGE = os.getenv("LANGUAGE", "en")
-    MODEL = os.getenv("MODEL", "eleven_multilingual_v2")
-    NAME = os.getenv("NAME", None) 
-    VOICE_ID = "EXAVITQu4vr4xnSDxMaL" if NAME is None else get_voice_id(NAME)
-    FUNCTIONS = get_available_functions_from_json("src/aux/json/functions.json")
+  LOG_LEVEL = os.getenv('DEBUG', 'INFO').upper()
+  if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']: LOG_LEVEL = 'INFO'
+  LogHandler(LOG_LEVEL)
 
-    OPENAI_API_KEY = open_file('openaiapikey.txt')
-    EL_API_KEY = open_file('elevenlabsapikey.txt')
+  LANGUAGE = os.getenv("LANGUAGE", "en")
+  MODEL = os.getenv("MODEL", "eleven_multilingual_v2")
+  NAME = os.getenv("NAME", None)
+  VOICE_ID = "EXAVITQu4vr4xnSDxMaL" if NAME is None else get_voice_id(NAME)
+  FUNCTIONS = get_available_functions_from_json("src/aux/json/functions.json")
 
-    logging.INFO(f"Starting Olivia Oracle with Language {LANGUAGE} and Model {MODEL}")
+  OPENAI_API_KEY = open_file('openaiapikey.txt')
+  EL_API_KEY = open_file('elevenlabsapikey.txt')
 
-    # TODO: create another file that handles stantiating those classes
-    context_manager_service = ContextManagerService(LANGUAGE)
-    record_service = RecordService(duration=5, fs=44100, channels=2)
+  logging.info(f"Starting Olivia Oracle with Language {LANGUAGE} and Model {MODEL}")
 
-    context = context_manager_service.get_context()
+  # TODO: create another file that handles instantiating those classes
+  authentication_service = AuthenticationService()
+  context_manager_service = ContextManagerService(LANGUAGE)
+  context = context_manager_service.get_context()
 
-    chatgpt_service = ChatGPTService(openai_api_key=OPENAI_API_KEY, context=context, functions=FUNCTIONS)
-    eleven_labs_service = ElevenLabsService(voice_id=VOICE_ID, api_key=EL_API_KEY, model=MODEL)
-    google_manager = GoogleManager()
+  record_service = RecordService(duration=5, fs=44100, channels=2)
+  function_service = FunctionService()
+  google_manager = GoogleManager(function_service, authentication_service)
 
-    while True:
-      run()
+  chatgpt_service = ChatGPTService(openai_api_key=OPENAI_API_KEY, context=context, functions=FUNCTIONS)
+  eleven_labs_service = ElevenLabsService(voice_id=VOICE_ID, api_key=EL_API_KEY, model=MODEL)
+
+  while True:
+    run()

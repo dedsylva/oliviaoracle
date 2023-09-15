@@ -11,7 +11,7 @@ class ElevenLabsService:
     self.api_key = api_key
     self.model = model
 
-    logging.DEBUG(f"Instantiating ElevenLabsServce")
+    logging.debug(f"Instantiating ElevenLabsServce")
 
   def text_to_speech(self, text):
     text = re.sub(r'(Response:|Narration:|Image: generate_image:.*|)', '', text).strip()
@@ -31,18 +31,18 @@ class ElevenLabsService:
         }
     }
 
-    logging.INFO("Calling Eleven Labs API")
-    logging.DEBUG(f"Text sent to Eleven Labs: {text}")
+    logging.info("Calling Eleven Labs API")
+    logging.debug(f"Text sent to Eleven Labs: {text}")
 
     response = requests.post(url, headers=headers, json=data)
 
     if response.status_code == 200:
-        logging.DEBUG(f"Response Status Code from Eleven Labs API: {response.status_code}")
+        logging.debug(f"Response Status Code from Eleven Labs API: {response.status_code}")
         with open('output.mp3', 'wb') as f:
             f.write(response.content)
         audio = AudioSegment.from_mp3('output.mp3')
         play(audio)
     else:
-        logging.ERROR(f"Response Status Code from Eleven Labs API: {response.status_code}")
+        logging.error(f"Response Status Code from Eleven Labs API: {response.status_code}")
         ElevenLabsAPI(f"Status Code {response.status_code}, message: {response.text}")
 

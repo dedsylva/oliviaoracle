@@ -8,7 +8,7 @@ class Events(metaclass=Singleton):
     pass
 
   def _add(self, ):
-    logging.DEBUG(f"Adding event")
+    logging.debug(f"Adding event")
     pass
   
   def _get(self):

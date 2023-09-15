@@ -8,15 +8,15 @@ class RecordService:
     self.fs = fs
     self.channels = channels
 
-    logging.DEBUG(f"Instantiating RecordService")
+    logging.debug(f"Instantiating RecordService")
 
   def record(self):
-      logging.INFO('Recording...')
+      logging.info('Recording...')
 
       myrecording = sd.rec(int(self.duration * self.fs), samplerate=self.fs, channels=self.channels)
       sd.wait()
 
-      logging.INFO('Recording complete.')
+      logging.info('Recording complete.')
 
       filename = 'myrecording.wav'
       sf.write(filename, myrecording, self.fs)

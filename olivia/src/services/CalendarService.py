@@ -2,16 +2,14 @@ import logging
 import datetime
 from googleapiclient.discovery import build
 from src.aux.utils import get_month_name
-from src.domain.google.Event import Event
+from src.domain.google.Event import EventFetch, EventCreation
+from src.management.Singleton import Singleton
 
-class CalendarService:
+class CalendarService(metaclass=Singleton):
 
   def __init__(self, credentials):
     self.credentials = credentials
-    self.service = build('calendar', 'v3', credentials=self.credentials)
-
-  def get_calendar_service(self):
-    return self.service
+    self.google_calendar = build('calendar', 'v3', credentials=self.credentials)
 
   @staticmethod
   def handle_time_and_create_response_message(event_time):
@@ -32,14 +30,15 @@ class CalendarService:
 
     return response
         
-  def get_upcoming_events(self, number_of_days):
-    logging.DEBUG(f"Getting Upcoming Events for {number_of_days} days")
+  def _get_events(self, event: EventFetch):
+    number_of_days = event.number_of_days
+    logging.debug(f"Getting Upcoming Events for {number_of_days} days")
 
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     # TODO: replace print with logging
     print('Getting List of 10 events')
-    events_result = self.service.events().list(
+    events_result = self.google_calendar.events().list(
                         calendarId='primary', 
                         timeMin=now,
                         maxResults=number_of_days, 
@@ -48,17 +47,18 @@ class CalendarService:
     events = events_result.get('items', [])
 
     if not events:
-      logging.WARN("No upcoming events found")
+      logging.warn("No upcoming events found")
+      # TODO: transform this in to a generic function in utils that transforms in to chatgpt format
       return "{\"descrption\": \"no events found for the next\" + number_of_days + \" days\"}"
     else:
-      logging.DEBUG("Got the following events from Google Calendar API")
-      logging.DEBUG(events)
+      logging.debug("Got the following events from Google Calendar API")
+      logging.debug(events)
       return events
 
   @staticmethod
   def create_response_message(events):
-    logging.DEBUG(f"Creating Response Message for events:")
-    logging.DEBUG(events)
+    logging.debug(f"Creating Response Message for events:")
+    logging.debug(events)
 
     for event in events:
       # start information
@@ -69,10 +69,11 @@ class CalendarService:
       event_date_end, event_time_end = event['end'].get('dateTime', event['start'].get('date')).split('T')
       year_end, month_end, day_end = event_date_end.split("-")
 
+      # TODO: transform this in to a generic function in utils that transforms in to chatgpt format
       return "{\"event_name\": " + event['summary']+ ", \"day_start\": " + day_start + ", \"month_start\": "+ get_month_name(month_start) + " , \"year_start\": " + year_start + " , \"time_start\": " + CalendarService.handle_time_and_create_response_message(event_time_start) + ", \"day_end\": " + day_end + ", \"month_end\": "+ get_month_name(month_end) + " , \"year_end\": " + year_end + " , \"time_end\": " + CalendarService.handle_time_and_create_response_message(event_time_end) + "}"
   
-  def _create_event(self, event: Event):
+  def _create_event(self, event: EventCreation):
     # https://developers.google.com/calendar/api/v3/reference/events/insert#python
-    self.service.events().insert(
+    self.google_calendar.events().insert(
                             calendarId='primary', 
                             body=event).execute()

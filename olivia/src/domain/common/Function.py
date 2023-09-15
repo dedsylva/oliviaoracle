@@ -4,4 +4,4 @@ from dataclasses import dataclass
 class Function:
   name: str
   value: object
-  args: list[str]
+  args: object
