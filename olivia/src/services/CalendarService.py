@@ -1,8 +1,10 @@
 import logging
 import datetime
+import json
+from dataclasses import asdict
 from googleapiclient.discovery import build
 from src.aux.utils import get_month_name
-from src.domain.google.Event import EventFetch, EventCreation
+from src.domain.google.Event import EventFetch, EventCreation 
 from src.management.Singleton import Singleton
 
 class CalendarService(metaclass=Singleton):
@@ -73,7 +75,16 @@ class CalendarService(metaclass=Singleton):
       return "{\"event_name\": " + event['summary']+ ", \"day_start\": " + day_start + ", \"month_start\": "+ get_month_name(month_start) + " , \"year_start\": " + year_start + " , \"time_start\": " + CalendarService.handle_time_and_create_response_message(event_time_start) + ", \"day_end\": " + day_end + ", \"month_end\": "+ get_month_name(month_end) + " , \"year_end\": " + year_end + " , \"time_end\": " + CalendarService.handle_time_and_create_response_message(event_time_end) + "}"
   
   def _create_event(self, event: EventCreation):
+    # TODO: datetime is being created wrong. maybe something to do with timezone
     # https://developers.google.com/calendar/api/v3/reference/events/insert#python
-    self.google_calendar.events().insert(
+    logging.info(f"Calling Google Calendar API for creating event")
+    event = asdict(event)
+
+    result = self.google_calendar.events().insert(
                             calendarId='primary', 
                             body=event).execute()
+
+    if result is not None:
+      logging.info(f"Success! Event created")
+      logging.debug(f"Event: \n{event}")
+    return result

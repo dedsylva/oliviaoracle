@@ -12,11 +12,13 @@ class RecordService:
 
   def record(self):
       logging.info('Recording...')
+      print('Recording...')
 
       myrecording = sd.rec(int(self.duration * self.fs), samplerate=self.fs, channels=self.channels)
       sd.wait()
 
       logging.info('Recording complete.')
+      print('Recording complete.')
 
       filename = 'myrecording.wav'
       sf.write(filename, myrecording, self.fs)

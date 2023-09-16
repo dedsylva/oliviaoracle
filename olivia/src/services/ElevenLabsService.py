@@ -32,7 +32,7 @@ class ElevenLabsService:
     }
 
     logging.info("Calling Eleven Labs API")
-    logging.debug(f"Text sent to Eleven Labs: {text}")
+    logging.debug(f"Text sent to Eleven Labs: \n{text}")
 
     response = requests.post(url, headers=headers, json=data)
 

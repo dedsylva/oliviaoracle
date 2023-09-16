@@ -27,4 +27,6 @@ class GoogleManager:
     return CalendarService.create_response_message(events)
   
   def create_event(self, event: EventCreation):
+    logging.info("Creating one event in to Google Calendar")
+    logging.debug(f"Event to be created: \n{event}")
     self.calendar_service._create_event(event)

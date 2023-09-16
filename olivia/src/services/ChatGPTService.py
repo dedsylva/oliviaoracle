@@ -20,10 +20,12 @@ class ChatGPTService:
   def speech_to_text(self, filename):
     with open(filename, "rb") as file:
       logging.info("Calling Whisper API")
+      logging.info("Calling Whisper API")
 
       openai.api_key = self.openai_api_key
       result = openai.Audio.transcribe("whisper-1", file)
     transcription = result['text']
+    logging.debug(f"Got the following Response from Whisper API: \n{transcription}")
     return transcription
 
   def call_chatgpt(self, user_input, function=None):
@@ -38,7 +40,8 @@ class ChatGPTService:
     self.conversation.append({"role": "user","content": user_input})
 
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-0613",
+        # model="gpt-3.5-turbo-0613",
+        model="gpt-4",
         temperature=self.temperature,
         frequency_penalty=self.frequency_penalty,
         presence_penalty=self.presence_penalty,
@@ -46,8 +49,8 @@ class ChatGPTService:
         functions=self.functions)
 
     chat_response = completion['choices'][0]['message']
-    logging.debug(f"ChatGPT Response: {chat_response}")
-    logging.debug(f"ChatGPT Messages: {self.conversation}")
+    logging.debug(f"ChatGPT Response: \n{chat_response}")
+    logging.debug(f"ChatGPT Messages: \n{self.conversation}")
 
     return self.handle_response(chat_response)
  
@@ -68,13 +71,13 @@ class ChatGPTService:
         functions=self.functions)
 
     chat_response = completion['choices'][0]['message']
-    logging.debug(f"ChatGPT Response from sending function outputs: {chat_response}")
-    logging.debug(f"ChatGPT Messages: {self.conversation}")
+    logging.debug(f"ChatGPT Response from sending function outputs: \n{chat_response}")
+    logging.debug(f"ChatGPT Messages: \n{self.conversation}")
     return self.handle_response(chat_response)
 
  
   def handle_response(self, chat_response):
-    logging.debug(f"Handling Response {chat_response}")
+    logging.debug(f"Handling Response \n{chat_response}")
 
     if chat_response.get("function_call"):
       self.conversation.append({"role": "assistant", "content": chat_response["content"], "function_call": chat_response["function_call"]})

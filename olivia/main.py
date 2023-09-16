@@ -14,8 +14,8 @@ from src.management.LogHandler import LogHandler
 
 def run():
   # Record Speech
-  # filename = record_service.record()
-  filename = 'myrecording.wav'
+  filename = record_service.record()
+  #filename = 'myrecording.wav'
 
   # Translate to Text using Whisper
   transcription = chatgpt_service.speech_to_text(filename)
@@ -28,6 +28,7 @@ def run():
 
     if function_result is None:
        logging.error(f"Function {function_call['name']} wasn't called correctly")
+       exit(-1)
     else:
       response, function_call = chatgpt_service.callback_chatgpt_with_function_results(function_call["name"], function_result)
 
@@ -35,7 +36,7 @@ def run():
 
 if __name__ == "__main__":
 
-  LOG_LEVEL = os.getenv('DEBUG', 'INFO').upper()
+  LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
   if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']: LOG_LEVEL = 'INFO'
   LogHandler(LOG_LEVEL)
 
@@ -55,7 +56,7 @@ if __name__ == "__main__":
   context_manager_service = ContextManagerService(LANGUAGE)
   context = context_manager_service.get_context()
 
-  record_service = RecordService(duration=5, fs=44100, channels=2)
+  record_service = RecordService(duration=7, fs=44100, channels=2)
   function_service = FunctionService()
   google_manager = GoogleManager(function_service, authentication_service)
 
