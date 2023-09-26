@@ -13,12 +13,17 @@ from src.aux.utils import get_voice_id, open_file, get_available_functions_from_
 from src.management.LogHandler import LogHandler
 
 def run():
-  # Record Speech
-  filename = record_service.record()
-  #filename = 'myrecording.wav'
+  if PROMPT is not None:
+    print("\nInput:")
+    transcription = input()
 
-  # Translate to Text using Whisper
-  transcription = chatgpt_service.speech_to_text(filename)
+  else:
+    # Record Speech
+    filename = record_service.record()
+    #filename = 'myrecording.wav'
+
+    # Translate to Text using Whisper
+    transcription = chatgpt_service.speech_to_text(filename)
 
   # Call ChatGPT
   response, function_call = chatgpt_service.call_chatgpt(user_input=transcription)
@@ -46,6 +51,7 @@ if __name__ == "__main__":
   if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']: LOG_LEVEL = 'INFO'
   LogHandler(LOG_LEVEL)
 
+  PROMPT = os.getenv("PROMPT", None)
   LANGUAGE = os.getenv("LANGUAGE", "en")
   MODEL = os.getenv("MODEL", "eleven_multilingual_v2")
   NAME = os.getenv("NAME", None)
