@@ -4,7 +4,11 @@ from typing import Optional
 @dataclass
 class EventTime:
   dateTime: str
-  timezone: Optional[str] = "America/Sao_Paulo"
+  timezone: str 
+
+  def __post_init__(self):
+    if self.timezone is None:
+      self.timezone = "America/Sao_Paulo"
 
 @dataclass
 class EventCreation:
