@@ -40,8 +40,8 @@ class ChatGPTService:
     self.conversation.append({"role": "user","content": user_input})
 
     completion = openai.ChatCompletion.create(
-        # model="gpt-3.5-turbo-0613",
-        model="gpt-4",
+        model="gpt-3.5-turbo-0613",
+        #model="gpt-4",
         temperature=self.temperature,
         frequency_penalty=self.frequency_penalty,
         presence_penalty=self.presence_penalty,

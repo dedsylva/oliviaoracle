@@ -24,6 +24,12 @@ def run():
   response, function_call = chatgpt_service.call_chatgpt(user_input=transcription)
 
   while chatgpt_service.function_called:
+    # TODO: call a validation with all the arguments 
+    # - for example: I'm about to create the following event:
+    # - are you sure?
+
+    # TODO: put default values for most arguments so that the functions are executed properly
+
     function_result = function_service.call_function(function_call)
 
     if function_result is None:
