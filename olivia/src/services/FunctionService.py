@@ -16,7 +16,7 @@ class FunctionService(metaclass=Singleton):
     available_functions = self._get()
     for af in available_functions:
       if af["name"] == function_call["name"]:
-        logging.info(f"Starting to look fro arguments of function {af['name']}")
+        logging.info(f"Starting to look for arguments of function {af['name']}")
         function = af["value"]
 
         try:

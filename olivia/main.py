@@ -36,6 +36,7 @@ def run():
     # TODO: put default values for most arguments so that the functions are executed properly
 
     function_result = function_service.call_function(function_call)
+    logging.debug(f"Function Result: {function_result}")
 
     if function_result is None:
        logging.error(f"Function {function_call['name']} wasn't called correctly")

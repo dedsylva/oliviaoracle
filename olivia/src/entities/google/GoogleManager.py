@@ -27,6 +27,12 @@ class GoogleManager:
     return CalendarService.create_response_message(events)
   
   def create_event(self, event: EventCreation):
+
+    # hallucinations of ChatGPT, and this is not being set by default on the class
+    event.start["timeZone"] = "America/Sao_Paulo"
+    event.end["timeZone"] = "America/Sao_Paulo"
+
     logging.info("Creating one event in to Google Calendar")
     logging.debug(f"Event to be created: \n{event}")
-    self.calendar_service._create_event(event)
+
+    return self.calendar_service._create_event(event)
