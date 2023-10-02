@@ -2,6 +2,7 @@ import logging
 import json
 from src.management.Singleton import Singleton
 from src.domain.common.Function import Function
+from src.responses.FunctionErrorResponse import FunctionErrorResponse
 
 class FunctionService(metaclass=Singleton):
   def __init__(self):
@@ -31,7 +32,7 @@ class FunctionService(metaclass=Singleton):
         except Exception as e:
           logging.error(f"Function {function_call['name']} with args {args} could not be executed properly")
           logging.error(f"Exception: \n{e}")
-          return None
+          return FunctionErrorResponse("I'm sorry, but there was something wrong, please try again.")
 
     else:
       return None

@@ -38,8 +38,6 @@ class CalendarService(metaclass=Singleton):
 
     # Call the Calendar API
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    # TODO: replace print with logging
-    print('Getting List of 10 events')
     events_result = self.google_calendar.events().list(
                         calendarId='primary', 
                         timeMin=now,
