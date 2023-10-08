@@ -66,8 +66,10 @@ if __name__ == "__main__":
 
   # TODO: create another file that handles instantiating those classes
   database_management =  DatabaseManagement()
+  database_management._start()
 
-  exit(0)
+  while True:
+    a = 1
 
   authentication_service = AuthenticationService()
   context_manager_service = ContextManagerService(LANGUAGE)

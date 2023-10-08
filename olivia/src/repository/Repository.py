@@ -10,11 +10,11 @@ class Repository:
 
   def get_one(self, id):
     logging.debug(f"Getting one item from table {self.table} with id {id}")
-    self.cursor.execute(self.base_queries.get_one_query(id))
+    return self.cursor.execute(self.base_queries.get_one_query(id)).fetchone()
 
   def get_all(self):
     logging.debug(f"Getting all items from table {self.table}")
-    self.cursor.execute(self.base_queries.get_all_query())
+    return self.cursor.execute(self.base_queries.get_all_query()).fetchall()
 
   def update_one(self, id):
     logging.debug(f"Updating one item from table {self.table} with id {id}")

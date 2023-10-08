@@ -5,6 +5,8 @@ openaiapikey.txt
 *.json
 *.wav
 *.mp3
+olivia/*.db
+olivia/*.db-journal
 olivia/token.pickle
 olivia/logs/
 olivia/ui.py
