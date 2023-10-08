@@ -11,6 +11,7 @@ from src.services.AuthenticationService import AuthenticationService
 from src.entities.google.GoogleManager import GoogleManager
 from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json
 from src.management.LogHandler import LogHandler
+from src.management.Database import DatabaseManagement
 
 def run():
   if PROMPT is not None:
@@ -47,7 +48,6 @@ def run():
   eleven_labs_service.text_to_speech(text=response)
 
 if __name__ == "__main__":
-
   LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
   if LOG_LEVEL not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']: LOG_LEVEL = 'INFO'
   LogHandler(LOG_LEVEL)
@@ -65,6 +65,9 @@ if __name__ == "__main__":
   logging.info(f"Starting Olivia Oracle with Language {LANGUAGE} and Model {MODEL}")
 
   # TODO: create another file that handles instantiating those classes
+  database_management =  DatabaseManagement()
+  database_management._start()
+
   authentication_service = AuthenticationService()
   context_manager_service = ContextManagerService(LANGUAGE)
   context = context_manager_service.get_context()

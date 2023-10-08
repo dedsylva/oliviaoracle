@@ -13,6 +13,13 @@ class AuthenticationService:
   def __init__(self):
     self.creds = None
   
+  def get_new_token(self):
+    flow = InstalledAppFlow.from_client_secrets_file(
+            GOOGLE_CREDENTIALS_FILE, GOOGLE_SCOPES)
+    self.creds = flow.run_local_server(port=0)
+
+
+  
   def authenticate_google(self):
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -23,11 +30,18 @@ class AuthenticationService:
     # If there are no (valid) credentials available, let the user log in.
     if not self.creds or not self.creds.valid:
       if self.creds and self.creds.expired and self.creds.refresh_token:
-        self.creds.refresh(Request())
+        try:
+          self.creds.refresh(Request())
+        except Exception as e:
+          os.remove('token.pickle')
+          self.get_new_token()
+
+          # Save the credentials for the next run
+          with open('token.pickle', 'wb') as token:
+            pickle.dump(self.creds, token)
+
       else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-                GOOGLE_CREDENTIALS_FILE, GOOGLE_SCOPES)
-        self.creds = flow.run_local_server(port=0)
+        self.get_new_token()
 
       # Save the credentials for the next run
       with open('token.pickle', 'wb') as token:
