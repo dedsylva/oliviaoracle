@@ -1,7 +1,8 @@
 import threading
 import logging
-from src.queries.reminders import create_table, insert_value, select_value, delete_table
+from src.database.schemas.reminders import create_table, insert_value, select_value, delete_table
 from src.management.Singleton import Singleton
+from src.repository.Repository import Repository
 
 class DatabaseManagement(metaclass=Singleton):
   def __init__(self):
@@ -10,6 +11,7 @@ class DatabaseManagement(metaclass=Singleton):
     self._thread = None
     self.con = None
     self.cursor = None
+    self.repository = None
 
   def validate_connection(self):
       logging.debug("testing creating appointments table")
@@ -19,10 +21,9 @@ class DatabaseManagement(metaclass=Singleton):
       self.cursor.execute(insert_value)
 
       logging.debug("testing selecting value in appointments table")
-      value = self.cursor.execute(select_value).fetchall()
+      value = self.cursor.execute(select_value).fetchone()
 
-      assert len(value) == 1
-      assert value[0] == (1, 'Test', None, '2023-10-07', '12', '2023-10-07', '13')
+      assert value == (1, 'Test', None, '2023-10-07', '12', '2023-10-07', '13')
 
       logging.debug("testing deleting appointments table")
       self.cursor.execute(delete_table)
@@ -38,6 +39,7 @@ class DatabaseManagement(metaclass=Singleton):
         logging.info("Connecting to olivia database")
         self.con = sqlite3.connect("olivia.db")
         self.cursor = self.con.cursor()
+        self.repository = Repository(table="appointments", cursor=self.cursor)
 
         if(self.validate_connection()) :
           logging.info("creating appointments table")
@@ -45,6 +47,9 @@ class DatabaseManagement(metaclass=Singleton):
 
 
       except Exception as e:
+        self.con = None
+        self.cursor = None
+        self.repository = None
         logging.error("Error when trying to connect to olivia database")
         logging.error(e)
         exit(-1)
@@ -52,15 +57,18 @@ class DatabaseManagement(metaclass=Singleton):
     else:
       logging.warn("Trying to create Database already initialized.")
 
-
   def reminder(self):
+    self.initialize_database()
     while True:
-      self.initialize_database()
+      # get appointments from the database
+      appointments = self.repository.get_all()
 
-      # TODO: remove this hard coded
-      n_days = 1 
+      # check if appointment is to happen this day. If so caches it and waits 5 minutes (if time is less waits that time)
 
-      appointments = self.get_appointments(n_days)
+      # waits 30 minutes otherwise
+
+      # if appointment is today, 1 hour, 30 min, 15 min, 5 min sends a reminer (if user sends to forget reminder it only says at the time)
+
    
   def _start(self):
     if not self.started and not self._thread:
@@ -78,5 +86,8 @@ class DatabaseManagement(metaclass=Singleton):
       self._thread.join()
       self.started = False
       self._thread = None
+      self.con = None
+      self.cursor = None
+      self.repository = None
     else:
       logging.warn("Trying to stop a thread that is already closed")

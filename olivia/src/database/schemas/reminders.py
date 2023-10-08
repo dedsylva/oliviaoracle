@@ -1,3 +1,5 @@
+tables = ['appointments']
+
 create_table = '''
 CREATE TABLE IF NOT EXISTS appointments(
   id INTEGER PRIMARY KEY,
@@ -16,19 +18,18 @@ INSERT INTO appointments VALUES
 '''
 
 select_value = '''
-SELECT * FROM appointments where id == 1
+SELECT * FROM appointments WHERE id == 1
 '''
 
 select_values = '''
 SELECT * FROM appointments 
 '''
 
-
-
 delete_value = '''
-DELETE FROM appointments where id == 1
+DELETE FROM appointments WHERE id == 1
 '''
 
 delete_table = '''
 DROP TABLE IF EXISTS appointments
 '''
+
