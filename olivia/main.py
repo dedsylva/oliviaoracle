@@ -68,9 +68,6 @@ if __name__ == "__main__":
   database_management =  DatabaseManagement()
   database_management._start()
 
-  while True:
-    a = 1
-
   authentication_service = AuthenticationService()
   context_manager_service = ContextManagerService(LANGUAGE)
   context = context_manager_service.get_context()
