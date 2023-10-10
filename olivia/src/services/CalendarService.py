@@ -86,4 +86,4 @@ class CalendarService(metaclass=Singleton):
       logging.info(f"Success! Event created")
       logging.debug(f"Event: \n{event}")
       logging.info(f"Result: \n{result}")
-    return "Event Created"
+    return {"Response": "Event Created"}

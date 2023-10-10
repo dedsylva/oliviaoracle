@@ -12,6 +12,7 @@ from src.entities.google.GoogleManager import GoogleManager
 from src.aux.utils import get_voice_id, open_file, get_available_functions_from_json
 from src.management.LogHandler import LogHandler
 from src.management.Database import DatabaseManagement
+from src.responses.FunctionErrorResponse import FunctionErrorResponse
 
 def run():
   if PROMPT is not None:
@@ -39,7 +40,7 @@ def run():
     function_result = function_service.call_function(function_call)
     logging.debug(f"Function Result: {function_result}")
 
-    if function_result is None:
+    if function_result is None or isinstance(function_result, FunctionErrorResponse):
        logging.error(f"Function {function_call['name']} wasn't called correctly")
        exit(-1)
     else:
@@ -74,7 +75,7 @@ if __name__ == "__main__":
 
   record_service = RecordService(duration=7, fs=44100, channels=2)
   function_service = FunctionService()
-  google_manager = GoogleManager(function_service, authentication_service)
+  google_manager = GoogleManager(function_service, authentication_service, database_management)
 
   chatgpt_service = ChatGPTService(openai_api_key=OPENAI_API_KEY, context=context, functions=FUNCTIONS)
   eleven_labs_service = ElevenLabsService(voice_id=VOICE_ID, api_key=EL_API_KEY, model=MODEL)

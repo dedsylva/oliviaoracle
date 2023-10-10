@@ -5,6 +5,9 @@ class BaseQuery:
     self.table = table
     logging.debug(f"Instantiagin BaseQuery class for table {self.table}")
 
+  def insert_one_query(self, value):
+    return f"INSERT INTO {self.table} VALUES {tuple(value.__dict__.values())}"
+  
   def get_one_query(self, id): 
     return f"SELECT TOP 1 FROM {self.table} WHERE id = {id}"
 

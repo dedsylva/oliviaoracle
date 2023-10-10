@@ -8,6 +8,10 @@ class Repository:
     self.base_queries = BaseQuery(self.table)
     self.cursor = cursor
 
+  def insert_one(self, value):
+    logging.debug(f"Inserting {value} in table {self.table}")
+    return self.cursor.execute(self.base_queries.insert_one_query(value))
+
   def get_one(self, id):
     logging.debug(f"Getting one item from table {self.table} with id {id}")
     return self.cursor.execute(self.base_queries.get_one_query(id)).fetchone()

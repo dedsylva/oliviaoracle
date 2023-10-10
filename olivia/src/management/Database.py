@@ -123,17 +123,7 @@ class DatabaseManagement(metaclass=Singleton):
         if check:
           DatabaseManagement.send_reminder(appointment.name, appointment.description, timing)
 
-        # puts in cache if appointment to happen today
-        #elif current_date == appointment_start_date:
-          #cache[appointment.name] = appointment
-
-          # if time is less waits that time
-          #minutes_to_sleep = appointment_start_time if current_time - appointment_start_time < 5*60 else  5*60
-          #time.sleep(minutes_to_sleep)
-
         else:
-          # waits 30 minutes otherwise
-          #time.sleep(30*60)
           logging.debug("Reminder Thread: Sleeping for 60 seconds")
 
         time.sleep(60)

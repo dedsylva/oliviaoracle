@@ -2,4 +2,4 @@ from .Response import Response
 
 class FunctionErrorResponse(Response):
   def __init__(self, msg):
-    super(msg).__init__()
+    super().__init__(msg)
