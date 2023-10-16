@@ -22,3 +22,14 @@ class BaseQuery:
 
   def remove_all_query(self):
     return f"DELETE FROM {self.table}"
+  
+  # data needs to be list of lists, each entry the column name, type, and extra info
+  # example: ['id', 'INTEGER', 'PRIMARY KEY'], ['name', 'TEXT', 'NOT NULL']]
+  def create_table_query(self, data):
+    columns = [' '.join(d) for d in data]
+    aux = "\n "
+    for c in columns: aux += c + " \n"
+    return f"CREATE TABLE IF NOT EXISTS {self.table} ( {aux} );"
+  
+  def delete_table_query(self):
+    return f"DROP TABLE IF EXISTS {self.table}"

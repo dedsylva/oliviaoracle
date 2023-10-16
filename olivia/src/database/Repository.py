@@ -1,5 +1,5 @@
 import logging
-from src.database.queries.BaseQuery import BaseQuery
+from src.database.BaseQuery import BaseQuery
 
 class Repository:
   def __init__(self, table, cursor):
@@ -31,3 +31,11 @@ class Repository:
   def remove_all(self):
     logging.debug(f"Removing all items from table {self.table}")
     self.cursor.execute(self.base_queries.remove_all_query())
+  
+  def create_table(self, data):
+    logging.debug(f"Creating table {self.table}")
+    self.cursor.execute(self.base_queries.create_table_query(data))
+
+  def delete_table(self):
+    logging.debug(f"Deleting table {self.table}")
+    self.cursor.execute(self.base_queries.delete_table_query())

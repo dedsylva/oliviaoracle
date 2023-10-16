@@ -3,9 +3,8 @@ import time
 from datetime import datetime
 import threading
 import logging
-from src.database.schemas.reminders import create_table, insert_value, select_value, delete_table
 from src.management.Singleton import Singleton
-from src.repository.Repository import Repository
+from src.database.Repository import Repository
 from src.domain.common.Appointment import Appointment
 
 class DatabaseManagement(metaclass=Singleton):
@@ -16,6 +15,16 @@ class DatabaseManagement(metaclass=Singleton):
     self.con = None
     self.cursor = None
     self.repository = None
+    # TODO: this needs to be better
+    # TODO: create schema class and put this there
+    self.value = (1, "Test", "2023-10-08", "2-49", "2023-10-09", "2-40", None)
+    self.appointments =[["id", "INTEGER", "PRIMARY KEY"], 
+                        ["name", "TEXT", "NOT NULL"],
+                        ["start_date", "TEXT"],
+                        ["start_time", "TEXT"],
+                        ["end_date", "TEXT"],
+                        ["end_time", "TEXT"],
+                        ["description", "TEXT"]] 
 
     # Always clean databases
     if os.path.exists("olivia.db"):
@@ -25,18 +34,19 @@ class DatabaseManagement(metaclass=Singleton):
       os.remove("olivia.db-journal")
 
   def validate_connection(self):
-      logging.debug("testing creating appointments table")
-      self.cursor.execute(create_table)
+      logging.debug(f"testing creating {self.repository } table")
+      self.repository.create_table(self.appointments)
 
-      logging.debug("testing inserting value in appointments table")
-      self.cursor.execute(insert_value)
+      logging.debug(f"testing inserting value in {self.repository} table")
+      self.repository.insert_one(self.value)
 
-      logging.debug("testing selecting value in appointments table")
-      value = self.cursor.execute(select_value).fetchone()
+      logging.debug(f"testing selecting value in {self.repository} table")
+      res = self.repository.get_one(1)
 
-      assert value == (1, "Test", "2023-10-08", "2-49", "2023-10-09", "2-40", None)
-      logging.debug("testing deleting appointments table")
-      self.cursor.execute(delete_table)
+      assert res == (1, "Test", "2023-10-08", "2-49", "2023-10-09", "2-40", None)
+
+      logging.debug(f"testing deleting {self.repository} table")
+      self.repository.delete_table()
 
       logging.info("Connection validated")
 
@@ -54,11 +64,11 @@ class DatabaseManagement(metaclass=Singleton):
         self.repository = Repository(table="appointments", cursor=self.cursor)
 
         if(self.validate_connection()) :
-          logging.info("creating appointments table")
-          self.cursor.execute(create_table)
+          logging.info(f"creating {self.repository.table} table")
+          self.repository.create_table(self.appointments)
 
-          logging.info("inserting value in appointments table")
-          self.cursor.execute(insert_value)
+          logging.info(f"inserting value in {self.repository.table} table")
+          self.repository.insert_one(self.value)
 
 
       except Exception as e:
